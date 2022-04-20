@@ -14,8 +14,11 @@
         dx, dy = direction
         x, y = pos
         distance = 1
-        until !board.valid_pos?([x + (dx * distance), y + (dy * distance)])
-          potential_moves << [x + (dx * distance), y + (dy * distance)]
+        collision = false
+        until collision == true || !board.valid_pos?([x + (dx * distance), y + (dy * distance)], color)
+          end_pos = [x + (dx * distance), y + (dy * distance)]
+          potential_moves << end_pos
+          collision = true if board.get_color(end_pos) == other_color
           distance += 1
         end
     end
@@ -43,12 +46,12 @@
   def moves
     possible_moves = []
     x, y = pos
+    
     move_diff.each do |move|
       dx,dy = move
       new_x, new_y = x + dx, y + dy
       new_pos = [new_x, new_y]
-      next if !(0..7).include?(new_x) || !(0..7).include?(new_y)
-      next if !board[new_pos].is_a?(NullPiece)
+      next if !board.valid_pos?(new_pos, color)
       possible_moves << new_pos
     end
     possible_moves
